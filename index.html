@@ -119,7 +119,6 @@
       <div id="table"></div>
     </div>
     <script>
-      first_time = true;
       var eventTable = $('#table').MPTable({showPercentages: false, firstColHeader: 'Property Value'});
       var property = $('#propSelect').MPPropertySelect();
       property.MPPropertySelect('setEvent');$('#dates').MPDatepicker();
@@ -138,10 +137,12 @@
             property: property.MPPropertySelect('value')
           };
         MP.api.custom_query(script, queryParams).done(function(results) {
-          first_time = false;
           var res = {};
           _.each(results, function(item) {
             res[item.key[1]] = res[item.key[1]] || {};
+            if (_.isEmpty(res[item.key[1]])) {
+              _.each(event_list, function(event, index) {res[item.key[1]][index + 1] = 0;})
+            }
             for (var i = item.key[0]; i > 0; i--) {
               res[item.key[1]][i] = res[item.key[1]][i] + item.value.results || item.value.results;
             }
