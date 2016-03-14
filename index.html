@@ -110,7 +110,7 @@
       <div id="dates"></div>
       <div class="events">
         <div class="label">Funnel Steps:</div>
-        <input id="event_list" value="Sign up for Trial, Complete Chat, Complete Session">
+        <input id="event_list" value="Game Progress, Click to App Store, Install">
         <div></div>
         <div class="label">Property:</div>
         <div id="propSelect"></div>
@@ -119,6 +119,7 @@
       <div id="table"></div>
     </div>
     <script>
+      first_time = true;
       var eventTable = $('#table').MPTable({showPercentages: false, firstColHeader: 'Property Value'});
       var property = $('#propSelect').MPPropertySelect();
       property.MPPropertySelect('setEvent');$('#dates').MPDatepicker();
@@ -129,14 +130,16 @@
         event_list = _.map(event_list, remove_beginning_spaces);
         var dateVal = $('#dates').val();
         var script = $('#cq').html();
+        debugger;
         var queryParams = {
             event_list: event_list,
-            from_date: date_to_string(dateVal.from),
+            from_date: first_time? : date_to_string(dateVal.from),
             to_date: date_to_string(dateVal.to),
             time_between_steps: 3600000, //an hour
             property: property.MPPropertySelect('value')
           };
         MP.api.custom_query(script, queryParams).done(function(results) {
+          first_time = false;
           var res = {};
           _.each(results, function(item) {
             res[item.key[1]] = res[item.key[1]] || {};
